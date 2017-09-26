@@ -10,9 +10,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,20 +27,25 @@ public class ValidateOntology {
     private static String outdir = "result";
 
 
-    private static Model readDBpediaOntology() throws IOException {
+    public static Model readOntology(InputStream is) throws IOException {
 
         //OntModel model = ModelFactory.createOntologyModel();
         Model model = ModelFactory.createDefaultModel();
 
         try {
-            RDFDataMgr.read(model, DBPEDIA_ONTOLOGY.toURI().toString(), baseUri, Lang.TURTLE);
+            RDFDataMgr.read(model, convertStreamToString(is), baseUri, Lang.TURTLE);
         } catch (Exception e) {
             L.error(e.getMessage());
         }
         return model;
     }
 
-    private static Collection<ShaclTestCaseResult> runTests(Model model) {
+    private static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    public static Collection<ShaclTestCaseResult> runTests(Model model) {
         RDFUnitValidate rval = new RDFUnitValidate();
         TestExecution te = rval.checkModelWithRdfUnit(model);
 
@@ -59,7 +62,9 @@ public class ValidateOntology {
 
         new File(outdir).mkdirs();
 
-        Model model = readDBpediaOntology();
+        InputStream is = new FileInputStream(DBPEDIA_ONTOLOGY);
+
+        Model model = readOntology(is); // reads DBpedia Ontology
         L.debug("Read model: " + model.size() + " triples");
 
         Collection<ShaclTestCaseResult> tcrs = runTests(model);
