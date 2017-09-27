@@ -25,60 +25,13 @@ import org.dbpedia.ontologytracker.ValidateOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServlet;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Date;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-//import com.jamonapi.Monitor;
-//import com.jamonapi.MonitorFactory;
-//import org.nlp2rdf.core.NIFParameters;
-//import org.nlp2rdf.core.RDFUnitValidatorWrapper;
+@SpringBootApplication
+public class WebService {
 
-/**
- * User: gcpdev
- * Date: 23.09.17
- */
-@Path("/")
-public class WebService { //extends HttpServlet {
-
-    /** TODO:
-     * - receive parameters (ontology; format?)
-     * - run tests on ontology
-     * - write tests output
-     */
-
-
-    private static Logger log = LoggerFactory.getLogger(WebService.class);
-    private static final String baseUri = "http://dbpedia.org/ontology/";
-
-
-    @Path("/greet")
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response doGreet() {
-        String output =  "Hello Stranger, the time is "+ new Date();
-        return Response.status(200).entity(output).build();
+    public static void main(String[] args) {
+        SpringApplication.run(WebService.class, args);
     }
-
-
-    @Path("/ontology")
-    @Consumes("text/turtle")
-    @POST
-    @Produces("application/rdf+xml")
-    public void inputstream(final InputStream is) throws IOException {
-        Model ont = ValidateOntology.readOntology(is);
-        Collection<ShaclTestCaseResult> tcrs = ValidateOntology.runTests(ont);
-        tcrs.stream().forEach(t -> {
-            t.getResultAnnotations();
-        });
-    }
-
-
-
-
 }

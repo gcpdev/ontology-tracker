@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.aksw.rdfunit.model.interfaces.results.ShaclTestCaseResult;
 import org.aksw.rdfunit.model.interfaces.results.TestCaseResult;
 import org.aksw.rdfunit.model.interfaces.results.TestExecution;
+import org.aksw.rdfunit.validate.wrappers.RDFUnitStaticValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -33,7 +34,7 @@ public class ValidateOntology {
         Model model = ModelFactory.createDefaultModel();
 
         try {
-            RDFDataMgr.read(model, convertStreamToString(is), baseUri, Lang.TURTLE);
+            model.read(is, baseUri, "TTL");
         } catch (Exception e) {
             L.error(e.getMessage());
         }
@@ -64,8 +65,11 @@ public class ValidateOntology {
 
         InputStream is = new FileInputStream(DBPEDIA_ONTOLOGY);
 
+
+
         Model model = readOntology(is); // reads DBpedia Ontology
         L.debug("Read model: " + model.size() + " triples");
+
 
         Collection<ShaclTestCaseResult> tcrs = runTests(model);
         L.debug("Tests finished");
