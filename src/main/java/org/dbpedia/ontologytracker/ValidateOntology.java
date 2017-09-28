@@ -1,16 +1,24 @@
 package org.dbpedia.ontologytracker;
 
 import com.google.gson.Gson;
+import org.aksw.rdfunit.io.format.FormatService;
+import org.aksw.rdfunit.io.format.SerializationFormat;
+import org.aksw.rdfunit.io.writer.RdfResultsWriterFactory;
+import org.aksw.rdfunit.io.writer.RdfStreamWriter;
+import org.aksw.rdfunit.io.writer.RdfWriter;
+import org.aksw.rdfunit.io.writer.RdfWriterException;
 import org.aksw.rdfunit.model.interfaces.results.ShaclTestCaseResult;
 import org.aksw.rdfunit.model.interfaces.results.TestCaseResult;
 import org.aksw.rdfunit.model.interfaces.results.TestExecution;
-import org.aksw.rdfunit.validate.wrappers.RDFUnitStaticValidator;
+import org.aksw.rdfunit.model.writers.results.TestExecutionWriter;
+import org.apache.jena.atlas.lib.ProgressMonitor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.log4j.Logger;
 
+import javax.jws.WebParam;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,12 +49,7 @@ public class ValidateOntology {
         return model;
     }
 
-    private static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
-    }
-
-    public static Collection<ShaclTestCaseResult> runTests(Model model) {
+    public static Collection<ShaclTestCaseResult> runShaclTests(Model model) {
         RDFUnitValidate rval = new RDFUnitValidate();
         TestExecution te = rval.checkModelWithRdfUnit(model);
 
@@ -59,19 +62,39 @@ public class ValidateOntology {
         return stcrs;
     }
 
+    //This method is used by the WebService, providing parametrized output formats
+    public static String runTests(Model model, String format) {
+
+        RDFUnitValidate rval = new RDFUnitValidate();
+        TestExecution te = rval.checkModelWithRdfUnit(model);
+        String out = "";
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Model resultModel = ModelFactory.createDefaultModel();
+            TestExecutionWriter.create(te).write(resultModel);
+            resultModel.write(baos, format);
+
+            out = baos.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            out = "An error occurred while writing tests output.";
+        }
+
+        return out;
+
+    }
+
     public static void main(String[] args) throws IOException {
 
         new File(outdir).mkdirs();
 
         InputStream is = new FileInputStream(DBPEDIA_ONTOLOGY);
 
-
-
         Model model = readOntology(is); // reads DBpedia Ontology
         L.debug("Read model: " + model.size() + " triples");
 
-
-        Collection<ShaclTestCaseResult> tcrs = runTests(model);
+        Collection<ShaclTestCaseResult> tcrs = runShaclTests(model);
         L.debug("Tests finished");
 
         List<DBpediaTest> tests = new ArrayList<>();
