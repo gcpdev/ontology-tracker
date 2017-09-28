@@ -16,21 +16,11 @@
 
 package org.dbpedia.ontologytracker.webservice;
 
-//import com.hp.hpl.jena.ontology.OntModel;
-//import com.hp.hpl.jena.rdf.model.Model;
-
-import org.aksw.rdfunit.model.interfaces.results.ShaclTestCaseResult;
-import org.apache.jena.rdf.model.Model;
-import org.dbpedia.ontologytracker.ValidateOntology;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class WebService {
-
     public static void main(String[] args) {
         SpringApplication.run(WebService.class, args);
     }

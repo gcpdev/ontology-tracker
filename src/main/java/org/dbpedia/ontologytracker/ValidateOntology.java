@@ -94,6 +94,8 @@ public class ValidateOntology {
         Model model = readOntology(is); // reads DBpedia Ontology
         L.debug("Read model: " + model.size() + " triples");
 
+        String output = runTests(model, "RDFXML");
+
         Collection<ShaclTestCaseResult> tcrs = runShaclTests(model);
         L.debug("Tests finished");
 
