@@ -1,24 +1,14 @@
 package org.dbpedia.ontologytracker;
 
 import com.google.gson.Gson;
-import org.aksw.rdfunit.io.format.FormatService;
-import org.aksw.rdfunit.io.format.SerializationFormat;
-import org.aksw.rdfunit.io.writer.RdfResultsWriterFactory;
-import org.aksw.rdfunit.io.writer.RdfStreamWriter;
-import org.aksw.rdfunit.io.writer.RdfWriter;
-import org.aksw.rdfunit.io.writer.RdfWriterException;
 import org.aksw.rdfunit.model.interfaces.results.ShaclTestCaseResult;
 import org.aksw.rdfunit.model.interfaces.results.TestCaseResult;
 import org.aksw.rdfunit.model.interfaces.results.TestExecution;
 import org.aksw.rdfunit.model.writers.results.TestExecutionWriter;
-import org.apache.jena.atlas.lib.ProgressMonitor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFWriter;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.log4j.Logger;
 
-import javax.jws.WebParam;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,16 +84,14 @@ public class ValidateOntology {
         Model model = readOntology(is); // reads DBpedia Ontology
         L.debug("Read model: " + model.size() + " triples");
 
-        String output = runTests(model, "RDFXML");
-
         Collection<ShaclTestCaseResult> tcrs = runShaclTests(model);
         L.debug("Tests finished");
 
-        List<DBpediaTest> tests = new ArrayList<>();
+        List<DBpediaTestResult> tests = new ArrayList<>();
         tcrs.stream().forEach(t -> {
             //logging
             //L.info(t.getSeverity().name() + " " + t.getMessage() + " " + t.getFailingResource());
-            tests.add(new DBpediaTest(t));
+            tests.add(new DBpediaTestResult(t));
 
         });
 

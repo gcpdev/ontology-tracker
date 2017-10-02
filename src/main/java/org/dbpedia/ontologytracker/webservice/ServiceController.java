@@ -4,15 +4,26 @@ import java.io.*;
 import org.aksw.rdfunit.io.reader.RdfReaderException;
 import org.apache.jena.rdf.model.Model;
 import org.dbpedia.ontologytracker.ValidateOntology;
+import org.dbpedia.ontologytracker.webservice.user.UserRepository;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
+@SpringBootApplication
 @RestController
 @RequestMapping("/ws")
-public class ServiceController {
+public class ServiceController extends Exception {
+
+    @Autowired
+    private UserRepository repository;
 
     @PostMapping(value = {"/ontology"}, consumes = {"text/plain","text/turtle","application/x-turtle"},
             produces = {
+                    "text/plain", //for returning errors strings
                     "text/turtle",
                     "application/x-turtle",
                     "application/ntriples",
