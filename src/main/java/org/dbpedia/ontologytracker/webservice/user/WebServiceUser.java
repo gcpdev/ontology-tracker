@@ -1,10 +1,11 @@
 package org.dbpedia.ontologytracker.webservice.user;
 
 import org.springframework.data.annotation.Id;
-//import org.springframework.security.crypto.keygen.KeyGenerators;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Entity;
 
+@Entity
 public class WebServiceUser {
 
     @Id

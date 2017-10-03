@@ -34,6 +34,6 @@ public class ServiceControllerExceptionHandler {
     @ResponseBody
     String
     handleFurtherExceptions(HttpServletRequest req, Exception ex) {
-        return "The service could not handle your request due to an server error: " + System.lineSeparator() + ex.getLocalizedMessage() + System.lineSeparator();
+        return "The service could not handle your request due to a server error: " + System.lineSeparator() + ex.getLocalizedMessage() + System.lineSeparator();
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 
-@SpringBootApplication
+//@SpringBootApplication
 @RestController
 @RequestMapping("/ws")
 public class ServiceController extends Exception {
