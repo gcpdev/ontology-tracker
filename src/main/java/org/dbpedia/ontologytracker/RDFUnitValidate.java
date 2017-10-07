@@ -28,7 +28,10 @@ public class RDFUnitValidate {
         long startTime = System.nanoTime();
         RdfReader ontologyShaclReader = null;
         try {
-            ontologyShaclReader = new RdfModelReader(RdfReaderFactory.createFileOrResourceReader(schemaSource, "").read());
+            if(schemaSource != defaultSchema)
+                ontologyShaclReader = new RdfModelReader(RdfReaderFactory.createReaderFromText(schemaSource, "TTL").read());
+            else
+                ontologyShaclReader = new RdfModelReader(RdfReaderFactory.createFileOrResourceReader(schemaSource, "").read());
         } catch (RdfReaderException e) {
             throw new IllegalArgumentException(e);
         }

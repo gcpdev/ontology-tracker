@@ -75,6 +75,29 @@ public class ValidateOntology {
 
     }
 
+    //This method is used by the WebService, providing parametrized output formats
+    public static String runTests(Model model, String format, String test) {
+
+        RDFUnitValidate rval = new RDFUnitValidate(test);
+        TestExecution te = rval.checkModelWithRdfUnit(model);
+        String out = "";
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Model resultModel = ModelFactory.createDefaultModel();
+            TestExecutionWriter.create(te).write(resultModel);
+            resultModel.write(baos, format);
+
+            out = baos.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            out = "An error occurred while writing tests output.";
+        }
+
+        return out;
+
+    }
+
     public static void main(String[] args) throws IOException {
 
         new File(outdir).mkdirs();

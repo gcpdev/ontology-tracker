@@ -59,6 +59,7 @@
                 <executions>
                     <execution>
                         <id>copy-to-main</id>
+                        <idFromThisUser>copy-to-main</idFromThisUser>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -130,11 +131,6 @@
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>
             <version>2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.carrotsearch.randomizedtesting</groupId>
-            <artifactId>junit4-ant</artifactId>
-            <version>2.1.13</version>
         </dependency>
 
         <dependency>
