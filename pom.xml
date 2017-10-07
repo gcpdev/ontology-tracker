@@ -32,7 +32,7 @@
     </properties>
     <build>
         <plugins>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
@@ -40,11 +40,11 @@
                     <encoding>UTF-8</encoding>
                     <compilerArgs>
                         <!--arg>-verbose</arg>
-                        <arg>-Xlint:all,-options,-path</arg-->
+                        <arg>-Xlint:all,-options,-path</arg-- >
                         <arg>-Xlint:unchecked</arg>
                     </compilerArgs>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
