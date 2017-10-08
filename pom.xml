@@ -51,6 +51,9 @@
                 <version>2.16</version>
                 <configuration>
                     <enableAssertions>false</enableAssertions>
+                    <includes>
+                        <include>**/Test*.java</include>
+                    </includes>
                 </configuration>
             </plugin>
             <!--plugin>
