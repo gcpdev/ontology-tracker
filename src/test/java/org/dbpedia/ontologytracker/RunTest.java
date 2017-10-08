@@ -12,13 +12,13 @@ import org.junit.runner.RunWith;
 
 @RunWith(RdfUnitJunitRunner.class)
 @Schema(uri = "ontology/dbo.tests.shapes.ttl")
-public class TestRunner {
+public class RunTest {
 
     @TestInput
     public RdfReader getInputData() throws RdfReaderException {
         return new RdfModelReader(
-                RdfReaderFactory.createResourceReader(
-                        "ontology/dbpedia_ontology.ttl").read());
+                RdfReaderFactory.createFileOrResourceReader(
+                        "ontology/dbpedia_ontology.ttl", "").read());
     }
     ;
 
