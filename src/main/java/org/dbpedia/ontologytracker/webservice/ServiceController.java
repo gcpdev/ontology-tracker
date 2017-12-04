@@ -4,9 +4,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.aksw.rdfunit.io.reader.RdfFirstSuccessReader;
+import org.aksw.rdfunit.io.reader.RdfModelReader;
+import org.aksw.rdfunit.io.reader.RdfReader;
 import org.aksw.rdfunit.io.reader.RdfReaderException;
+import org.aksw.rdfunit.io.reader.RdfReaderFactory;
+import org.aksw.rdfunit.io.reader.RdfStreamReader;
+import org.aksw.rdfunit.model.interfaces.results.TestExecution;
+import org.aksw.rdfunit.model.writers.results.TestExecutionWriter;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.dbpedia.ontologytracker.RDFUnitValidate;
 import org.dbpedia.ontologytracker.ValidateOntology;
 import org.dbpedia.ontologytracker.webservice.test.ShaclTest;
 import org.dbpedia.ontologytracker.webservice.test.ShaclTestRepository;
@@ -279,8 +290,12 @@ public class ServiceController extends Exception {
     @RequestMapping(value = "/ontologyUpload", method = RequestMethod.POST, consumes = {"multipart/form-data"},  headers = {"content-type=multipart/mixed","content-type=multipart/form-data"})    
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String ontologyUpload(@RequestPart(value="ontology") MultipartFile ontology, @RequestParam(value="format") String format, Authentication authentication) throws IOException, RdfReaderException {
-    	 L.info("Multiple file upload!");
+    public String ontologyUpload(@RequestPart(value="ontology") MultipartFile ontology, @RequestPart(value="shacltest") MultipartFile shacltest, @RequestParam(value="format") String format, Authentication authentication) throws IOException, RdfReaderException {
+    	 
+    	    L.info("Multiple file upload!");
+        
+    	    String out = "";
+            
         switch(format) {
             case "text/turtle":
             case "application/x-turtle":
@@ -322,11 +337,35 @@ public class ServiceController extends Exception {
             default:
                 format = "TURTLE";
         }
+        
 
-        try (InputStream is = ontology.getInputStream()) {        	
-            Model model = ValidateOntology.readOntology(is);
-            return ValidateOntology.runTests(model, format);
+        try  {
+        	
+            InputStream isontol = ontology.getInputStream();
+            InputStream isshacl = shacltest.getInputStream();
+            
+            Model model = ValidateOntology.readOntology(isontol);
+            RDFUnitValidate rval = new RDFUnitValidate(isshacl);
+            
+            TestExecution te = rval.checkModelWithRdfUnit(model);
+
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                Model resultModel = ModelFactory.createDefaultModel();
+                TestExecutionWriter.create(te).write(resultModel);
+                resultModel.write(baos, format);
+
+                out = baos.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                out = "An error occurred while writing tests output.";
+            }
+        } 
+        
+        catch (Exception e) {
+            L.debug("An error occurred while uploading ontology and shacl tests files" + e.getMessage());
         }
- 
+        
+        return out;
     }
 }
